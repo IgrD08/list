@@ -4,18 +4,13 @@ returnStatus_t printMenu(list_t *list);
 
 int main()
 {
-    system("rm -rf logs");
-
-    system("mkdir -p logs");
-
-    system("mkdir -p logs/img");
-
     if (fileOpening(&logFile, "logs/img/graphDumpHtml.htm", "w") == 1)
         return 1;
 
     fprintf(logFile, "<pre>");
 
     list_t list = {};
+
     if (listInit(&list) != CORRECT_STATUS)
         return 1;
 

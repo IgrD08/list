@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 mkdir -p bin
+rm -rf logs
+mkdir -p logs
+mkdir -p logs/img
 
 echo "Compilation started"
 

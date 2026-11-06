@@ -308,12 +308,17 @@ returnStatus_t graphDump(list_t *list)
 
     tm *parsedTime = localtime(&timeInSeconds);
 
-    char time[32] = {};
-    strftime(time, 32, "%Y%m%d%H%M%S", parsedTime);
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+
+    long millis = ts.tv_nsec / 1000000;
+
+    char time[64] = {};
+    strftime(time, sizeof(time), "%Y%m%d%H%M%S", parsedTime);
 
     char command[256];
     char fileName[256];
-    snprintf(fileName, sizeof(fileName), "logs/img/%s.dot", time);
+    snprintf(fileName, sizeof(fileName), "logs/img/%s%ld.dot", time, millis);
 
     filePointer = fopen(fileName, "w");
 
@@ -347,6 +352,11 @@ returnStatus_t graphDump(list_t *list)
         fprintf(filePointer, "\tnode%zu -> node%zu [style = invis, weight = 1000];\n", i, i + 1);
     }
 
+    for (ssize_t i = list->free; list->nodes[i].next != 0; i = list->nodes[i].next)
+    {
+        fprintf(filePointer, "\tnode%zd -> node%zd [color = \"#c0b900\";];\n", i, list->nodes[i].next);
+    }
+
     for (size_t i = 0; i < initialCapacity; i++)
     {
         if (list->nodes[i].next >= 0 && list->nodes[i].next < (ssize_t)initialCapacity && list->nodes[i].prev != -1)
@@ -359,11 +369,11 @@ returnStatus_t graphDump(list_t *list)
 
     fclose(filePointer);
 
-    snprintf(command, sizeof(command), "dot -Tpng logs/img/%s.dot -o logs/img/%s.png", time, time);
+    snprintf(command, sizeof(command), "dot -Tpng logs/img/%s%ld.dot -o logs/img/%s%ld.png", time, millis, time, millis);
 
     system(command);
 
-    fprintf(logFile, "<img src= %s.png width = 1500px>\n", time);
+    fprintf(logFile, "<img src= %s%ld.png width = 1500px>\n", time, millis);
 
     return CORRECT_STATUS;
 }
