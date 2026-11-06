@@ -4,8 +4,10 @@ mkdir -p bin
 
 echo "Compilation started"
 
-g++ main.cpp \
-    list.cpp \
+g++ src/main.cpp \
+    src/list.cpp \
+    src/logger.cpp \
+    src/listVerify.cpp \
     -D _DEBUG -ggdb3 -std=c++17 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations \
     -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts \
     -Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal \

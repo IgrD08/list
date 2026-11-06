@@ -1,17 +1,30 @@
-#include "list.h"
+#include "../include/list.h"
 
 returnStatus_t printMenu(list_t *list);
 
-returnStatus_t printMenu();
-
 int main()
 {
+    system("rm -rf logs");
+
+    system("mkdir -p logs");
+
+    system("mkdir -p logs/img");
+
+    if (fileOpening(&logFile, "logs/img/graphDumpHtml.htm", "w") == 1)
+        return 1;
+
+    fprintf(logFile, "<pre>");
+
     list_t list = {};
-    listInit(&list);
+    if (listInit(&list) != CORRECT_STATUS)
+        return 1;
 
     printMenu(&list);
 
     listDestroy(&list);
+
+    if (closeFile(&logFile) == 1)
+        return 1;
 
     return 0;
 }
@@ -32,8 +45,8 @@ returnStatus_t printMenu(list_t *list)
                "4 - delete from back\n"
                "5 - delete element from position\n"
                "6 - print\n"
-               "7 - exit the program\n"
-               "8 - delete element from position\033[0m\n"
+               "7 - dump list\n"
+               "8 - exit the program\033[0m\n"
               );
 
         if (scanf("%d", &callNumber) != 1)
@@ -70,11 +83,9 @@ returnStatus_t printMenu(list_t *list)
             {
                 int value = 0, position = 0;
 
-                scanf(SPEC SPEC, &position, &value);
+                scanf(SPEC SPEC , &position, &value);
 
-                size_t previousPos = previousIndex(list, position);
-
-                listInsert(list, position, value, previousPos);
+                listInsert(list, position, value);
             }
 
                 break;
@@ -97,9 +108,7 @@ returnStatus_t printMenu(list_t *list)
 
                 scanf(SPEC, &position);
 
-                size_t previousPos = previousIndex(list, position);
-
-                listErase(list, position, previousPos);
+                listErase(list, position);
             }
 
                 break;
@@ -112,13 +121,13 @@ returnStatus_t printMenu(list_t *list)
 
             case 7:
 
-                flag = 0;
+                listDump(list);
 
                 break;
 
             case 8:
 
-                listDump(list);
+                flag = 0;
 
                 break;
 
